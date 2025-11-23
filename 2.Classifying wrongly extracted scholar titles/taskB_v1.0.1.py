@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-作者:王涌琦
-
 任务B：使用 Word2Vec + SVM 对 CiteSeer 学术标题进行二分类（正确 / 错误）
 
 数据说明：
@@ -11,8 +9,8 @@
    - 'title given by manchine'：机器给出的标题
    - 'Y/N'：'Y' 表示标题正确，'N' 表示标题错误
 
-版本号：1.0.1
-升级内容:增加训练集中对冲突标题以及重复标题的处理
+版本号：1.0.2
+升级内容:增加SVM训练方法,使用svc而不是linearSVC
 
 步骤：
 1. 读取正负训练集 + 测试集
@@ -36,20 +34,22 @@ from sklearn.metrics import (
 )
 
 # =========================
-# 0. 配置：文件路径 & 参数
+# 0. 配置：文件路径 & 超参数
 # =========================
 
+# 如果你的脚本和数据在同一目录，下面这样即可；
+# 否则改成绝对路径，如 "D:/xxx/positive_trainingSet"
 POS_TRAIN_PATH = r"D:\中财\第五学期\信息检索\课程项目\IR_project2\训练集\positive_trainingSet"
 NEG_TRAIN_PATH = r"D:\中财\第五学期\信息检索\课程项目\IR_project2\训练集\negative_trainingSet"
 TEST_PATH      = r"D:\中财\第五学期\信息检索\课程项目\IR_project2\训练集\testSet-1000.xlsx"
 
-# Word2Vec 参数
+# Word2Vec 超参数
 W2V_VECTOR_SIZE = 50   # 词向量维度
 W2V_WINDOW      = 3     # 上下文窗口大小
-W2V_MIN_COUNT   = 1     # 最小词频
-W2V_EPOCHS      = 30    # 训练轮数
+W2V_MIN_COUNT   = 1     # 最小词频（标题短，用1比较安全）
+W2V_EPOCHS      = 50    # 训练轮数
 
-RANDOM_STATE    = 666    # 随机种子
+RANDOM_STATE    = 666    # 随机种子（为了结果可复现）
 
 
 # wyq预设参数
@@ -192,7 +192,7 @@ def train_word2vec(all_tokenized_titles):
         window=W2V_WINDOW,
         min_count=W2V_MIN_COUNT,
         sg=1,     # sg=1 使用 skip-gram，适合小数据
-        # hs=1,           
+        # hs=1,
         workers=4,
         epochs=W2V_EPOCHS,
         seed=RANDOM_STATE
@@ -248,10 +248,10 @@ def train_and_evaluate_svm(train_X, train_y, test_X, test_y):
     使用 LinearSVC 训练 SVM 分类器，并在测试集上评估。
     输出：Accuracy、Precision、Recall、F1、Macro/Micro F1 等。
     """
-    from sklearn.svm import LinearSVC
+    from sklearn.svm import SVC
 
-    print("Training SVM classifier (LinearSVC)...")
-    clf = LinearSVC(random_state=RANDOM_STATE)
+    print("Training SVM classifier (SVC)...")
+    clf = SVC(random_state=RANDOM_STATE)
     clf.fit(train_X, train_y)
 
     print("SVM training finished. Evaluating on test set...")
@@ -332,7 +332,7 @@ def main():
                                  test_vectors, test_labels)
 
     # 8. （可选）保存模型，方便后续加载
-    # from joblib import dump
+    from joblib import dump
     # w2v_model.save("w2v_model_titles.bin")
     # dump(clf, "svm_title_classifier.joblib")
     # print("Models saved to disk.")
