@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+作者:王涌琦
+
 任务B：使用 Word2Vec + SVM 对 CiteSeer 学术标题进行二分类（正确 / 错误）
 
 数据说明：
