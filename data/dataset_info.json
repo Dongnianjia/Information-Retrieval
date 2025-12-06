@@ -730,5 +730,19 @@
       "prompt": "content"
     },
     "folder": "python"
+  },
+  "qwen_train_data": {
+      "file_name": "/private/home/wuhao/LLaMA-Factory/data/train_en_yn.jsonl",
+      "formatting": "sharegpt",
+      "columns": {
+        "messages": "messages"
+      },
+      "tags": {
+        "role_tag": "role",
+        "content_tag": "content",
+        "user_tag": "user",
+        "assistant_tag": "assistant",
+        "system_tag": "system"
+      }
   }
 }
